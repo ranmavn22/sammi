@@ -6,9 +6,12 @@ namespace App\Services;
 
 class ExportService
 {
+    private $storeNameKey = 1;
+    private $numberKey = 8;
+
     private function getKey($item)
     {
-        return $item[3] . (string)$this->convertDateTime($item[6]);
+        return trim($item[3]) . (string)$this->convertDateTime($item[4]);
     }
 
     public function convertDateTime($dateTime)
@@ -22,15 +25,20 @@ class ExportService
     public function prepareDataExprire($dataRaw)
     {
         $storeCount = [];
-        foreach ($dataRaw as $item) {
+        foreach ($dataRaw as $index => $item) {
             if (!empty($item) && count($item) >= 15) {
                 $key = $this->getKey($item);
-                $storeName = $item[1];
+
+                $storeName = $item[$this->storeNameKey];
+
+                if(!(int) $item[$this->numberKey]) {
+                    dd($index, $item[0], (int) $item[$this->numberKey], $item[$this->numberKey]);
+                }
 
                 if (!empty($storeCount[$storeName][$key])) {
-                    $storeCount[$storeName][$key] += (int) $item[10];
+                    $storeCount[$storeName][$key] += (int) $item[$this->numberKey];
                 } else {
-                    $storeCount[$storeName][$key] = (int) $item[10];
+                    $storeCount[$storeName][$key] = (int) $item[$this->numberKey];
                 }
             }
         }
@@ -55,8 +63,8 @@ class ExportService
             }
 
             $item = array_merge($item, $values);
+            $item[4] = $this->convertDateTime($item[4]);
             $item[6] = $this->convertDateTime($item[6]);
-            $item[8] = $this->convertDateTime($item[8]);
 
             $dataFinal[] = $item;
         }
