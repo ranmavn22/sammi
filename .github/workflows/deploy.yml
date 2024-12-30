@@ -18,12 +18,6 @@ jobs:
           - branch: staging
             environment: Staging
 
-    # Chạy job nếu nhánh hiện tại khớp với matrix.branch
-    if: github.ref_name == matrix.branch
-
-    # Gắn môi trường dựa trên giá trị matrix.environment
-    environment: ${{ matrix.environment }}
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -37,6 +31,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y sshpass
 
       - name: Deploy via SSH
+        if: github.ref_name == matrix.branch # Điều kiện kiểm tra nhánh
         env:
           SSH_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
           USERNAME: ${{ secrets.DEPLOY_USERNAME }}
@@ -44,9 +39,9 @@ jobs:
         run: |
           sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $USERNAME@$HOST <<EOF
           cd /var/www/site-kid365-lp
-          if [ "${{ matrix.environment }}" == "staging" ]; then
+          if [ "${{ matrix.environment }}" == "Staging" ]; then
             echo "This is the staging environment" > test_env_staging.txt
-          elif [ "${{ matrix.environment }}" == "production" ]; then
+          elif [ "${{ matrix.environment }}" == "Production" ]; then
             echo "This is the production environment" > test_env_production.txt
           fi
 
