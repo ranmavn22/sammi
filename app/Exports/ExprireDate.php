@@ -22,10 +22,4 @@ class ExprireDate implements FromArray
     {
         return $this->data;
     }
-    
-
-    public function test2(): array
-    {
-        return $this->data;
-    }
 }
