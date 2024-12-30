@@ -1,0 +1,33 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - main # Kích hoạt khi có commit lên nhánh `main`
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Đảm bảo fetch đầy đủ commit history (quan trọng khi cần các tag hoặc branch đầy đủ)
+
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      - name: Deploy via SSH
+        env:
+          SSH_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+          USERNAME: ${{ secrets.SERVER_USERNAME }}
+          HOST: ${{ secrets.SERVER_HOST }}
+        run: |
+          sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $USERNAME@$HOST <<EOF
+          cd /var/www/site-kid365-lp
+          sudo git pull origin main
+          echo "<html><body><h1>Test HTML File Created Successfully!</h1></body></html>" > test.html
+          cat test.html
+
+          EOF
