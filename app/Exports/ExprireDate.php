@@ -17,4 +17,9 @@ class ExprireDate implements FromArray
     {
         return $this->data;
     }
+
+    public function test(): array
+    {
+        return $this->data;
+    }
 }
