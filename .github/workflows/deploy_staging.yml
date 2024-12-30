@@ -1,9 +1,9 @@
-name: Auto Deploy Product
+name: Auto Deploy Staging
 
 on:
   push:
     branches:
-      - main
+      - staging
 
 jobs:
   deploy:
@@ -12,8 +12,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - branch: main
-            environment: Production
+          - branch: staging
+            environment: Staging
 
     steps:
       - name: Checkout Code
@@ -35,6 +35,6 @@ jobs:
         run: |
           sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $USERNAME@$HOST <<EOF
           cd /var/www/site-kid365-lp
-          echo "This is the production environment" > test_env_production.txt
+          echo "This is the staging environment" > test_env_staging.txt
 
           EOF
