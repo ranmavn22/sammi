@@ -11,7 +11,7 @@ class ExportService
 
     private function getKey($item)
     {
-        return trim($item[4]) . (string)$this->convertDateTime($item[5]);
+        return trim($item[2]) . (string)$this->convertDateTime($item[5]);
     }
 
     public function convertDateTime($dateTime)
